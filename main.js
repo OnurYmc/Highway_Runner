@@ -5,7 +5,10 @@ let touchStartX = 0;
 let touchEndX = 0;
 let isGameOver = false;
 let score = 0;
+const startSpeed = 25;
+let currentSpeed = startSpeed;
 let highScore = 0;
+const speedIncrement = 0.5;
 const clock = new THREE.Clock();
 const scoreElement = document.getElementById("score");
 const gameOverElement = document.getElementById("game-over");
@@ -63,16 +66,16 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = clock.getDelta();
   if (!isGameOver) {
-    gridHelper.position.z += 24.0 * delta;
+    gridHelper.position.z += (currentSpeed / 3) * delta;
     if (gridHelper.position.z > 5) {
       gridHelper.position.z = 0;
     }
     cube.position.x = THREE.MathUtils.lerp(
       cube.position.x,
       currentLane * laneWidth,
-      40 * delta
+      10 * delta
     );
-    enemy.position.z += 72 * delta;
+    enemy.position.z += currentSpeed * delta;
     if (enemy.position.z > 5) {
       enemy.position.z = -50;
       const randomLane = Math.floor(Math.random() * 3) - 1;
@@ -80,6 +83,7 @@ function animate() {
     }
     score += 1;
     scoreElement.innerText = score;
+    currentSpeed = startSpeed + score * 0.01;
     if (Math.abs(enemy.position.z - cube.position.z) < 1.0) {
       if (Math.abs(enemy.position.x - cube.position.x) < 1.0) {
         isGameOver = true;
@@ -87,8 +91,8 @@ function animate() {
         gameOverElement.style.display = "block";
       }
     }
-    renderer.render(scene, camera);
   }
+  renderer.render(scene, camera);
 }
 animate();
 
@@ -100,6 +104,7 @@ document.addEventListener("keydown", (event) => {
     score = 0;
     scoreElement.innerText = "0";
     gameOverElement.style.display = "none";
+    currentSpeed = startSpeed;
     enemy.position.z = -50;
     cube.material.color.setHex(0x00ff00);
     return;
@@ -111,6 +116,7 @@ document.addEventListener("touchstart", (event) => {
     score = 0;
     scoreElement.innerText = "0";
     gameOverElement.style.display = "none";
+    currentSpeed = startSpeed;
     enemy.position.z = -50;
     cube.material.color.setHex(0x00ff00);
     return;
