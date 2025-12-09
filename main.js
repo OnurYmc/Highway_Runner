@@ -6,6 +6,7 @@ let touchEndX = 0;
 let isGameOver = false;
 let score = 0;
 let highScore = 0;
+const clock = new THREE.Clock();
 const scoreElement = document.getElementById("score");
 const gameOverElement = document.getElementById("game-over");
 const laneWidth = 2;
@@ -60,17 +61,18 @@ function handleSwipe() {
 }
 function animate() {
   requestAnimationFrame(animate);
+  const delta = clock.getDelta();
   if (!isGameOver) {
-    gridHelper.position.z += 0.1;
+    gridHelper.position.z += 24.0 * delta;
     if (gridHelper.position.z > 5) {
       gridHelper.position.z = 0;
     }
     cube.position.x = THREE.MathUtils.lerp(
       cube.position.x,
       currentLane * laneWidth,
-      0.1
+      40 * delta
     );
-    enemy.position.z += 0.3;
+    enemy.position.z += 72 * delta;
     if (enemy.position.z > 5) {
       enemy.position.z = -50;
       const randomLane = Math.floor(Math.random() * 3) - 1;
