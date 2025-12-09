@@ -106,7 +106,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("touchstart", (event) => {
-  if (isGameOver && event.code === "Space") {
+  if (isGameOver) {
     isGameOver = false;
     score = 0;
     scoreElement.innerText = "0";
