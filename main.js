@@ -236,10 +236,10 @@ function animate() {
       enemy.position.x = randomLane * laneWidth;
     }
 
-    preciseScore += 100 * delta;
+    preciseScore += 500 * delta;
     score = Math.floor(preciseScore);
     scoreElement.innerText = score;
-    currentSpeed = startSpeed + score * 0.05;
+    currentSpeed = startSpeed + score * 0.005;
 
     // 5. Collision Check
     if (Math.abs(enemy.position.z - cube.position.z) < 1.0) {
