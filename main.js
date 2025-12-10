@@ -236,7 +236,7 @@ function animate() {
       enemy.position.x = randomLane * laneWidth;
     }
 
-    preciseScore += 500 * delta;
+    preciseScore += 750 * delta;
     score = Math.floor(preciseScore);
     scoreElement.innerText = score;
     currentSpeed = startSpeed + score * 0.005;
