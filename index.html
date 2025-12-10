@@ -41,6 +41,7 @@
         padding: 20px;
         border-radius: 10px;
         border: 2px solid white;
+        pointer-events: auto;
       }
 
       h1 {
@@ -48,11 +49,48 @@
         font-size: 40px;
         color: #ff3333;
       }
+
+      /* Mini Leaderboard Styles */
+      .lb-row {
+        padding: 5px;
+        border-bottom: 1px solid #444;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      /* Colors for ranks */
+      .lb-row:nth-child(1) {
+        color: #ffd700;
+      } /* Gold */
+      .lb-row:nth-child(2) {
+        color: #c0c0c0;
+      } /* Silver */
+      .lb-row:nth-child(3) {
+        color: #cd7f32;
+      } /* Bronze */
+
+      /* Highlight the player's own row */
+      .my-rank {
+        background-color: #004400;
+        color: #00ff00 !important;
+        font-weight: bold;
+        border: 1px solid #00ff00;
+      }
+
+      /* The separator (...) */
+      .lb-gap {
+        text-align: center;
+        color: #888;
+        padding: 5px;
+      }
     </style>
     <script type="importmap">
       {
         "imports": {
-          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "firebase/app": "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js"
         }
       }
     </script>
@@ -60,9 +98,65 @@
   <body>
     <div id="ui-layer">
       <div id="score-board">Score: <span id="score">0</span></div>
+
       <div id="game-over" style="display: none">
         <h1>CRASHED!</h1>
-        <p>Press SPACE to Restart</p>
+        <p>Final Score: <span id="final-score">0</span></p>
+
+        <div
+          id="input-container"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+          "
+        >
+          <input
+            type="text"
+            id="player-name"
+            placeholder="Display Name (e.g. Ali)"
+            maxlength="10"
+            style="padding: 8px; width: 200px; text-align: center"
+          />
+
+          <input
+            type="text"
+            id="student-id"
+            placeholder="Student ID (Hidden)"
+            maxlength="10"
+            style="padding: 8px; width: 200px; text-align: center"
+          />
+
+          <button
+            id="submit-score"
+            style="
+              padding: 8px 20px;
+              cursor: pointer;
+              font-weight: bold;
+              background: #00ff00;
+              border: none;
+              margin-top: 5px;
+            "
+          >
+            SUBMIT SCORE
+          </button>
+        </div>
+        <p id="status-msg" style="font-size: 12px; color: yellow"></p>
+
+        <div
+          id="mini-leaderboard"
+          style="
+            display: none;
+            text-align: left;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+          "
+        ></div>
+
+        <br />
+        <p style="font-size: 14px; margin-top: 10px">Press SPACE to Restart</p>
       </div>
     </div>
     <script type="module" src="main.js"></script>

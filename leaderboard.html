@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Highway Runner - Leaderboard</title>
+    <style>
+      body {
+        background-color: #1a1a1a;
+        color: #fff;
+        font-family: "Courier New", Courier, monospace; /* Arcade style font */
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 60px;
+        color: #00ff00; /* Neon Green */
+        text-shadow: 0 0 20px #00ff00;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+      }
+
+      #subtitle {
+        font-size: 24px;
+        color: #888;
+        margin-bottom: 50px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #222;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        border: 2px solid #444;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        font-size: 30px;
+        color: #ff00de; /* Neon Pink */
+        padding-bottom: 20px;
+        border-bottom: 2px solid #555;
+      }
+
+      th.score-header {
+        text-align: right;
+      }
+
+      td {
+        font-size: 40px;
+        padding: 15px 0;
+        border-bottom: 1px solid #333;
+      }
+
+      /* Top 3 Colors */
+      tr:nth-child(1) td {
+        color: #ffd700;
+        text-shadow: 0 0 10px #ffd700;
+      } /* Gold */
+      tr:nth-child(2) td {
+        color: #c0c0c0;
+      } /* Silver */
+      tr:nth-child(3) td {
+        color: #cd7f32;
+      } /* Bronze */
+
+      .score-val {
+        text-align: right;
+        font-weight: bold;
+      }
+
+      /* Loading animation */
+      #loading {
+        font-size: 24px;
+        margin-top: 50px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Top Racers</h1>
+    <div id="subtitle">Live Leaderboard</div>
+
+    <div class="container">
+      <table id="score-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th class="score-header">Score</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
+      <div id="loading">Connecting to Satellite...</div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        orderBy,
+        limit,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDRsjxW-rfhOOvNmBH-Q1_EWZN0MNl9jyM",
+        authDomain: "highwayrunner-3d0b4.firebaseapp.com",
+        projectId: "highwayrunner-3d0b4",
+        storageBucket: "highwayrunner-3d0b4.firebasestorage.app",
+        messagingSenderId: "350388025736",
+        appId: "1:350388025736:web:d351bae015c2478625623d",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const tableBody = document.getElementById("leaderboard-body");
+      const loadingDiv = document.getElementById("loading");
+
+      // 1. Create a Query: "Give me the leaderboard, sorted by score (High to Low), Top 10 only"
+      const q = query(
+        collection(db, "leaderboard"),
+        orderBy("score", "desc"),
+        limit(10)
+      );
+
+      // 2. Open a Real-Time Listener
+      // onSnapshot runs AUTOMATICALLY whenever the database changes.
+      onSnapshot(q, (snapshot) => {
+        // Clear the old list
+        tableBody.innerHTML = "";
+        loadingDiv.style.display = "none";
+
+        let rank = 1;
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+
+          // Create HTML Row
+          const row = `
+                    <tr>
+                        <td>#${rank}</td>
+                        <td>${escapeHtml(data.name)}</td>
+                        <td class="score-val">${data.score}</td>
+                    </tr>
+                `;
+
+          tableBody.innerHTML += row;
+          rank++;
+        });
+      });
+
+      // Basic security against HTML injection (XSS)
+      function escapeHtml(text) {
+        if (!text) return text;
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+    </script>
+  </body>
+</html>
