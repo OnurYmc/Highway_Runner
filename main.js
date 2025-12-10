@@ -36,6 +36,7 @@ let touchStartX = 0;
 let touchEndX = 0;
 let isGameOver = false;
 let score = 0;
+let preciseScore = 0;
 let currentSpeed = startSpeed;
 
 const clock = new THREE.Clock();
@@ -235,10 +236,10 @@ function animate() {
       enemy.position.x = randomLane * laneWidth;
     }
 
-    // 4. Update Score
-    score += 1;
+    preciseScore += 5 * delta;
+    score = Math.floor(preciseScore);
     scoreElement.innerText = score;
-    currentSpeed = startSpeed + score * 0.02;
+    currentSpeed = startSpeed + score * 0.05;
 
     // 5. Collision Check
     if (Math.abs(enemy.position.z - cube.position.z) < 1.0) {
@@ -271,6 +272,7 @@ submitBtn.addEventListener("click", submitScore);
 function restartGame() {
   isGameOver = false;
   score = 0;
+  preciseScore = 0;
   scoreElement.innerText = "0";
 
   // RESET UI
