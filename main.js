@@ -238,7 +238,7 @@ function animate() {
     // 4. Update Score
     score += 1;
     scoreElement.innerText = score;
-    currentSpeed = startSpeed + score * 0.1;
+    currentSpeed = startSpeed + score * 0.05;
 
     // 5. Collision Check
     if (Math.abs(enemy.position.z - cube.position.z) < 1.0) {
